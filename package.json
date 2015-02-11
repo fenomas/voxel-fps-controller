@@ -20,9 +20,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "   TBD   "
+    "url" : "https://github.com/andyhall/voxel-fps-controller"
   },
-  "bugs": {
-    "url": "   TBD   "
+  "bugs" : {
+    "url" : "https://github.com/andyhall/voxel-fps-controller/issues"
   }
 }
