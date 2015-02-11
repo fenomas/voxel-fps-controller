@@ -1,6 +1,6 @@
 {
   "name": "voxel-fps-controller",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "An FPS controller that consumes inputs and moves a player entity and camera",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,12 @@
   },
   "author": "Andy Hall",
   "license": "MIT",
-  "keywords": [ "game", "fps", "controls", "voxeljs" ],
+  "keywords": [
+    "game",
+    "fps",
+    "controls",
+    "voxeljs"
+  ],
   "dependencies": {
     "extend": "^2.0.0",
     "gl-vec3": "^1.0.2"
