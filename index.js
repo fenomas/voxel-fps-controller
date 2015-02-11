@@ -4,14 +4,13 @@ var vec3 = require('gl-vec3')
 , extend = require('extend')
 
 
-module.exports = function(game, opts, control_state) {
-  return new FPSController(game, opts, control_state)
+module.exports = function(opts, control_state) {
+  return new FPSController(opts, control_state)
 }
 
 
-var _game
-, twopi =  Math.PI * 2
-, halfpi = Math.PI / 2
+var twopi =  Math.PI * 2,
+    halfpi = Math.PI / 2
 
 var defaults = {
   maxSpeed: 7
@@ -28,56 +27,64 @@ var defaults = {
 
   , crouchMoveMult: 0.6
   , sprintMoveMult: 1.3
-  , inverseY: true
+  , inverseY: false
   , rotationScale: 0.005
+  
+  , babylonCamera: false
 }
 
 
 /* 
  *    CONSTRUCTOR - the controller
 */
-function FPSController(game, opts) {
-  _game = game
+function FPSController(opts, stateObj) {
   this._target = null
-  this._camera = null
-
-  // inputs - abstract this later?
-  this.state = _game.buttons
+  this._camAccess = null
+  
+  // inputs state - obj with boolean properties like "jump" etc.
+  this.state = stateObj
 
   // engine setup
   opts = extend( {}, defaults, opts )
-  this.moveForce      = opts.moveForce
-  this.responsiveness = opts.responsiveness
-  this.jumpImpulse    = opts.jumpImpulse
-  this.jumpForce      = opts.jumpForce
-  this.jumpTime       = opts.jumpTime
-  this.airJumps       = opts.airJumps
-  this.airMoveMult    = opts.airMoveMult
-  this.crouchMoveMult = opts.crouchMoveMult
-  this.sprintMoveMult = opts.sprintMoveMult
-  this.inverseY       = opts.inverseY
-  this.rotationScale  = opts.rotationScale
-  this.standingFriction = opts.standingFriction
+  this.moveForce       = opts.moveForce
+  this.responsiveness  = opts.responsiveness
+  this.jumpImpulse     = opts.jumpImpulse
+  this.jumpForce       = opts.jumpForce
+  this.jumpTime        = opts.jumpTime
+  this.airJumps        = opts.airJumps
+  this.airMoveMult     = opts.airMoveMult
+  this.crouchMoveMult  = opts.crouchMoveMult
+  this.sprintMoveMult  = opts.sprintMoveMult
+  this.inverseY        = opts.inverseY
+  this.rotationScale   = opts.rotationScale
+  this.standingFriction= opts.standingFriction
   this.runningFriction = opts.runningFriction
-  this.maxSpeed       = opts.maxSpeed
+  this.maxSpeed        = opts.maxSpeed
+  this.babylonCamera   = opts.babylonCamera
   
   this._jumping = false
   this._airjumps = 0
   this._currjumptime = 0
+  
 }
 
 
 
 var proto = FPSController.prototype
 
+// sets target object - expected to be a physics rigid body,
+//    such as you'd get from voxel-physics-engine#addBody
 proto.setTarget = function(target) {
   if(target) this._target = target
   return this._target
 }
 
-proto.setCamera = function(camera) {
-  if(camera) this._camera = camera
-  return this._camera
+// camera accessor - expects an object with two methods:
+//    getRotationXY()  // returns [xrot,yrot]
+//    setRotationXY( xrot, yrot )
+proto.setCameraAccessor = function(camAccess) {
+  if(camAccess) this._camAccess = camAccess
+  return this._camAccess
 }
 
 
@@ -91,7 +98,7 @@ var state, target, onGround
 
 
 proto.tick = function(dt) {
-  if(!this._target || !this._camera) return
+  if(!this._target || !this._camAccess) return
 
   state = this.state
   target = this._target
@@ -102,10 +109,10 @@ proto.tick = function(dt) {
   dx = this.rotationScale * state.dy * ((this.inverseY) ? -1 : 1)
   dy = this.rotationScale * state.dx
   // normalize/clamp/update
-  rotX = clamp( this._camera.rotationX + dx, halfpi )
-  rotY = (this._camera.rotationY + dy) % twopi
-  this._camera.rotationX = rotX
-  this._camera.rotationY = rotY
+  var camrot = this._camAccess.getRotationXY() // [x,y]
+  rotX = clamp( camrot[0] + dx, halfpi )
+  rotY = clamp( camrot[1] + dy) % twopi
+  this._camAccess.setRotationXY( rotX, rotY )
 
   // jumping
   var canjump = (onGround || this._airjumps < this.airJumps)
@@ -140,6 +147,13 @@ proto.tick = function(dt) {
   if (state.right)    m[0] += 1
   if (state.left)     m[0] -= 1
   vec3.normalize( m, m )
+  
+  // not sure of an elegant way to fix this, but babylon.js 
+  // camera controls differently from that of voxel.js#gl-ndarray
+  if (this.babylonCamera) {
+    m[2] *= -1
+    rotY *= -1
+  }
 
   if (m[0] !== 0 || m[2] !== 0) {
     // convert to world coords and scale to desired movement vector
