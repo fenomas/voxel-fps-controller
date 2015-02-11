@@ -6,20 +6,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  
-  
-  "TBD" : "TBD",
-  
-  
-  "keywords": [
-    "voxeljs",
-    "physics",
-    "engine"
-  ],
-  "author": "",
+  "author": "Andy Hall",
   "license": "MIT",
+  "keywords": [ "game", "fps", "controls", "voxeljs" ],
   "dependencies": {
     "extend": "^2.0.0",
     "gl-vec3": "^1.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "   TBD   "
+  },
+  "bugs": {
+    "url": "   TBD   "
   }
 }
