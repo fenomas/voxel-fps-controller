@@ -10,7 +10,8 @@ module.exports = function(opts, control_state) {
 
 
 var twopi =  Math.PI * 2,
-    halfpi = Math.PI / 2
+    halfpi = Math.PI / 2,
+    rotXcutoff = halfpi-.0001 // engines may not like xRot == pi/2
 
 var defaults = {
   maxSpeed: 7
@@ -110,8 +111,8 @@ proto.tick = function(dt) {
   dy = this.rotationScale * state.dx
   // normalize/clamp/update
   var camrot = this._camAccess.getRotationXY() // [x,y]
-  rotX = clamp( camrot[0] + dx, halfpi )
-  rotY = clamp( camrot[1] + dy) % twopi
+  rotX = clamp( camrot[0] + dx, rotXcutoff )
+  rotY = (camrot[1] + dy) % twopi
   this._camAccess.setRotationXY( rotX, rotY )
 
   // jumping
