@@ -14,25 +14,27 @@ var twopi =  Math.PI * 2,
     rotXcutoff = halfpi-.0001 // engines may not like xRot == pi/2
 
 var defaults = {
-  maxSpeed: 7
-  , moveForce: 25
-  , responsiveness: 20
-  , runningFriction: 0
-  , standingFriction: 20
+  maxSpeed: 10, 
+  moveForce: 30,
+  responsiveness: 15,
+  runningFriction: 0,
+  standingFriction: 50,
 
-  , airMoveMult: 0.3
-  , jumpImpulse: 8
-  , jumpForce: 11
-  , jumpTime: 350 // ms
-  , airJumps: 1
+  airMoveMult: 0.5,
+  jumpImpulse: 10,
+  jumpForce: 12,
+  jumpTime: 500, // ms
+  airJumps: 1,
 
-  , crouchMoveMult: 0.6
-  , sprintMoveMult: 1.3
-  , inverseY: false
-  , rotationScale: 0.005
+  crouchMoveMult: 0.6,
+  sprintMoveMult: 1.3,
+  inverseY: false,
+  rotationScale: 0.0002,
   
-  , babylonCamera: false
+  babylonCamera: false
 }
+
+
 
 
 /* 
