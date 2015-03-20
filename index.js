@@ -92,7 +92,6 @@ proto.setCameraAccessor = function(camAccess) {
 
 
 
-
 var state, target, onGround
 , dx, dy, rotX, rotY, speed
 , m    = vec3.create()
@@ -100,14 +99,18 @@ var state, target, onGround
 , pushLen, canPush, pushAmt
 
 
+
 proto.tick = function(dt) {
   if(!this._target || !this._camAccess) return
+  this.tickCamera(dt)
+  this.tickPhysics(dt)
+}
 
+
+proto.tickCamera = function(dt) {
+  // reads mouse inputs and adjusts a camera via accessors
   state = this.state
-  target = this._target
-  onGround = (target.atRestY() < 0)
-
-
+  
   // Rotation: translate dx/dy inputs into y/x axis camera angle changes
   dx = this.rotationScale * state.dy * ((this.inverseY) ? -1 : 1)
   dy = this.rotationScale * state.dx
@@ -116,6 +119,14 @@ proto.tick = function(dt) {
   rotX = clamp( camrot[0] + dx, rotXcutoff )
   rotY = (camrot[1] + dy) % twopi
   this._camAccess.setRotationXY( rotX, rotY )
+}
+
+
+proto.tickPhysics = function(dt) {
+  // reads movement inputs and applies physics to the controlled body
+  state = this.state
+  target = this._target
+  onGround = (target.atRestY() < 0)
 
   // jumping
   var canjump = (onGround || this._airjumps < this.airJumps)
@@ -213,8 +224,6 @@ proto.tick = function(dt) {
   }
 
 }
-
-
 
 
 
