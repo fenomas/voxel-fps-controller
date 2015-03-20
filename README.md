@@ -9,7 +9,8 @@ It also consumes `dx`, `dy` values from the state object and controls
 a camera, via passed-in accessor functions.
 
 The module was made to work with voxeljs, but doesn't take references
-to any core parts of the engine, so it could feasibly be used with other games.
+to any core parts of the engine, and can be used with other game engines,
+such as [noa-hello-world](https://github.com/andyhall/noa-hello-world).
 
 (For voxel.js, this module conceptually sort of combines (and is based on) 
 [game-shell-fps-camera](https://github.com/deathcap/game-shell-fps-camera),
