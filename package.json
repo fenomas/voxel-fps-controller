@@ -1,6 +1,6 @@
 {
   "name": "voxel-fps-controller",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "An FPS controller that consumes inputs and moves a player entity and camera",
   "main": "index.js",
   "scripts": {
