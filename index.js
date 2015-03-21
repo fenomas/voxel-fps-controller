@@ -93,7 +93,7 @@ proto.setCameraAccessor = function(camAccess) {
 
 
 var state, target, onGround
-, dx, dy, rotX, rotY, speed
+, dx, dy, rotX, rotY, speed, camrot
 , m    = vec3.create()
 , push = vec3.create()
 , pushLen, canPush, pushAmt
@@ -115,7 +115,7 @@ proto.tickCamera = function(dt) {
   dx = this.rotationScale * state.dy * ((this.inverseY) ? -1 : 1)
   dy = this.rotationScale * state.dx
   // normalize/clamp/update
-  var camrot = this._camAccess.getRotationXY() // [x,y]
+  camrot = this._camAccess.getRotationXY() // [x,y]
   rotX = clamp( camrot[0] + dx, rotXcutoff )
   rotY = (camrot[1] + dy) % twopi
   this._camAccess.setRotationXY( rotX, rotY )
@@ -127,6 +127,7 @@ proto.tickPhysics = function(dt) {
   state = this.state
   target = this._target
   onGround = (target.atRestY() < 0)
+  rotY = this._camAccess.getRotationXY()[1]
 
   // jumping
   var canjump = (onGround || this._airjumps < this.airJumps)
